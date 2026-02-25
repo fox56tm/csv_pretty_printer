@@ -14,10 +14,11 @@ int main()
     char* line = malloc(capacity);
     if (line == NULL) {
         printf("mem error");
-        return 0;
+        fclose(csvIn);
+        return 1;
     }
 
-    while (fgets(line, capacity, csvIn) != NULL) {
+    while (fgets(line, (int)capacity, csvIn) != NULL) {
         size_t currLen = strlen(line);
 
         while (currLen > 0 && line[strlen(line) - 1] != '\n' && !feof(csvIn)) {
@@ -32,11 +33,12 @@ int main()
 
             else {
                 free(line);
+                fclose(csvIn);
                 printf("memmory error");
-                return 0;
+                return 1;
             }
 
-            if (fgets(line + oldLineLen, capacity - oldLineLen, csvIn) == NULL)
+            if (fgets(line + oldLineLen, (int)(capacity - oldLineLen), csvIn) == NULL)
                 break;
         }
 
@@ -65,10 +67,12 @@ int main()
                     free(cells[i]);
 
                 free(cells);
+                free(line);
+                fclose(csvIn);
 
                 printf("memmory error");
 
-                return 0;
+                return 1;
             }
 
             cells[colInd] = strdup(token);
@@ -84,7 +88,6 @@ int main()
 
         colInd = 0;
     }
-    free(line);
     fclose(csvIn);
     //--------------------------------
 
@@ -98,12 +101,17 @@ int main()
 
         curr = curr->next;
     }
+    if (maxColCount == 0) {
+        freeList(&myList);
+        free(line);
+        return 1;
+    }
     int* maxColWidths = calloc(maxColCount, sizeof(int));
 
     if (maxColWidths == NULL) {
         free(maxColWidths);
         printf("memmory error");
-        return 0;
+        return 1;
     }
     curr = myList.head;
 
