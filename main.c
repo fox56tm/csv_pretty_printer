@@ -85,8 +85,6 @@ int main()
         addToTail(&myList, cells, colInd);
 
         cells = NULL;
-
-        colInd = 0;
     }
     fclose(csvIn);
     //--------------------------------
@@ -110,6 +108,8 @@ int main()
 
     if (maxColWidths == NULL) {
         free(maxColWidths);
+        free(line);
+        freeList(&myList);
         printf("memmory error");
         return 1;
     }
