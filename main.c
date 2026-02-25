@@ -122,9 +122,9 @@ int main()
 
     Node* curr2 = myList.head->next;
 
-    for (int i = 0; i < myList.node_count - 1; i++) {
+    for (int i = 0; i < myList.nodeCount - 1; i++) {
         for (int j = 0; j < curr2->cols; j++) {
-            if (is_number(curr2->Cells[j]))
+            if (isNumber(curr2->Cells[j]))
                 fprintf(outTxt, "| %*s ", maxColWidths[j], curr2->Cells[j]);
 
             else
@@ -139,7 +139,7 @@ int main()
     fclose(outTxt);
     free(line);
     free(maxColWidths);
-    free_list(&myList);
+    freeList(&myList);
 
     printf("converting is ready!");
 
