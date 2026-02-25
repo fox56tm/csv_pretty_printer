@@ -98,5 +98,4 @@ build/
 .cache
 *.cbp
 *.layout
-*.csv
 *.depend
