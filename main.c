@@ -57,7 +57,7 @@ int main()
 
             else {
                 for (int i = 0; i < colInd; i++)
-                    free(cells[i]);             // очистил, что уже навыделял
+                    free(cells[i]);
 
                 printf("memmory error");
 
