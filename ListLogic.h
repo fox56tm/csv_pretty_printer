@@ -6,7 +6,7 @@
 
 int isNumber(char* str);
 
-void printHorizonLines(FILE* file, int* width, int colCount, char sep);
+void printHorizonLines(FILE* file, const int* width, int colCount, char sep);
 
 typedef struct ListNode {
     char** Cells;
