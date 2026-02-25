@@ -7,11 +7,15 @@ int main()
 {
     List myList = { NULL, NULL, 0 };
 
-    FILE* csvIn = fopen("test.csv", "r");
+    FILE* csvIn = fopen("test1.csv", "r");
 
     size_t capacity = 128; // минимальный буфер
 
     char* line = malloc(capacity);
+    if (line == NULL) {
+        printf("mem error");
+        return 0;
+    }
 
     while (fgets(line, capacity, csvIn) != NULL) {
         size_t currLen = strlen(line);
@@ -27,6 +31,7 @@ int main()
                 line = temp;
 
             else {
+                free(line);
                 printf("memmory error");
                 return 0;
             }
@@ -59,6 +64,8 @@ int main()
                 for (int i = 0; i < colInd; i++)
                     free(cells[i]);
 
+                free(cells);
+
                 printf("memmory error");
 
                 return 0;
@@ -77,6 +84,7 @@ int main()
 
         colInd = 0;
     }
+    free(line);
     fclose(csvIn);
     //--------------------------------
 
@@ -93,6 +101,7 @@ int main()
     int* maxColWidths = calloc(maxColCount, sizeof(int));
 
     if (maxColWidths == NULL) {
+        free(maxColWidths);
         printf("memmory error");
         return 0;
     }

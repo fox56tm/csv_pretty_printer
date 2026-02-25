@@ -9,6 +9,8 @@ void addToTail(List* myList, char** cells, int colCount)
     Node* newNode = malloc(sizeof(Node));
 
     if (newNode == NULL) {
+
+        free(newNode);
         printf("memmory error");
 
         return;
