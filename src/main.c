@@ -7,7 +7,7 @@ int main()
 {
     List myList = { NULL, NULL, 0 };
 
-    FILE* csvIn = fopen("tests/empty.csv", "r");
+    FILE* csvIn = fopen("tests/empty_cols.csv", "r");
     if (csvIn == NULL) {
         printf("Error open");
         return 1;
