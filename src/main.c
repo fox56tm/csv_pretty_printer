@@ -7,7 +7,22 @@ int main()
 {
     List myList = { NULL, NULL, 0 };
 
-    FILE* csvIn = fopen("test1.csv", "r");
+    FILE* csvIn = fopen("tests/empty.csv", "r");
+    if (csvIn == NULL) {
+        printf("Error open");
+        return 1;
+    }
+
+    fseek(csvIn, 0, SEEK_END);
+
+    long size = ftell(csvIn);
+    fseek(csvIn, 0, SEEK_SET);
+
+    if (size == 0) {
+        printf("Empty file\n");
+        fclose(csvIn);
+        return 1;
+    }
 
     size_t capacity = 128;
 
@@ -18,7 +33,7 @@ int main()
         return 1;
     }
 
-    while (fgets(line, (int)capacity, csvIn) != NULL) { // читаем строки из файла
+    while (fgets(line, (int)capacity, csvIn) != NULL) {
         size_t currLen = strlen(line);
 
         while (currLen > 0 && line[strlen(line) - 1] != '\n' && !feof(csvIn)) {
@@ -45,41 +60,51 @@ int main()
         if (currLen == 0 || line[0] == '\0')
             continue;
 
-        line[strlen(line) - 1] = '\0'; // удаляем \n
-
-        char* token = strtok(line, ",");
+        line[strlen(line) - 1] = '\0'; // удялем \n
 
         int colInd = 0;
 
         char** cells = NULL;
 
-        //-------------------------------- записываем массив токенов в список
+        //--------------------------------  массив токенов
 
-        while (token != NULL) {
+        char* start = line; // начало текущей ячейки
+        char* p = line; // указатель для прохода
 
-            char** temp = realloc(cells, (colInd + 1) * sizeof(char*));
+        while (1) {
 
-            if (temp != NULL)
-                cells = temp;
+            if (*p == ',' || *p == '\0') {
+                int end = (*p == '\0'); // дошли ли до конца
 
-            else {
-                for (int i = 0; i < colInd; i++)
-                    free(cells[i]);
+                *p = '\0';
 
-                free(cells);
-                free(line);
-                fclose(csvIn);
+                char** temp = realloc(cells, (colInd + 1) * sizeof(char*));
 
-                printf("memmory error");
+                if (temp != NULL) {
+                    cells = temp;
+                } else {
+                    for (int i = 0; i < colInd; i++)
+                        free(cells[i]);
 
-                return 1;
+                    free(cells);
+                    free(line);
+                    fclose(csvIn);
+
+                    printf("memory error");
+                    return 1;
+                }
+
+                // копируем кусок
+                cells[colInd] = strdup(start);
+                colInd++;
+
+                if (end) {
+                    break;
+                }
+
+                start = p + 1;
             }
-
-            cells[colInd] = strdup(token);
-
-            colInd++;
-
-            token = strtok(NULL, ",");
+            p++;
         }
 
         addToTail(&myList, cells, colInd);
@@ -87,7 +112,7 @@ int main()
         cells = NULL;
     }
     fclose(csvIn);
-    //--------------------------------считаем максимальную ширину столбцов
+    //--------------------------------  считаем ширину столбцов
 
     int maxColCount = 0;
 
@@ -125,7 +150,7 @@ int main()
         curr = curr->next;
     }
 
-    //-------------------------------- записываем в файл
+    //--------------------------------  записываем таблицу в файл
     FILE* outTxt = fopen("csv_to_txt.txt", "w");
 
     printHorizonLines(outTxt, maxColWidths, myList.head->cols, '=');
@@ -135,21 +160,27 @@ int main()
     }
     fprintf(outTxt, "|\n");
 
-    printHorizonLines(outTxt, maxColWidths, myList.head->cols, '=');
+    printHorizonLines(outTxt, maxColWidths, maxColCount, '=');
 
     Node* curr2 = myList.head->next;
 
     for (int i = 0; i < myList.nodeCount - 1; i++) {
-        for (int j = 0; j < curr2->cols; j++) {
-            if (isNumber(curr2->Cells[j]))
-                fprintf(outTxt, "| %*s ", maxColWidths[j], curr2->Cells[j]);
+        for (int j = 0; j < maxColCount; j++) {
+            if (j < curr2->cols) {
 
-            else
-                fprintf(outTxt, "| %-*s ", maxColWidths[j], curr2->Cells[j]);
+                if (isNumber(curr2->Cells[j]))
+                    fprintf(outTxt, "| %*s ", maxColWidths[j], curr2->Cells[j]);
+
+                else
+                    fprintf(outTxt, "| %-*s ", maxColWidths[j], curr2->Cells[j]);
+
+            } else
+                fprintf(outTxt, "| %*s ", maxColWidths[j], "");
         }
+
         fprintf(outTxt, "|\n");
 
-        printHorizonLines(outTxt, maxColWidths, myList.head->cols, '-');
+        printHorizonLines(outTxt, maxColWidths, maxColCount, '-');
 
         curr2 = curr2->next;
     }
@@ -158,7 +189,7 @@ int main()
     free(maxColWidths);
     freeList(&myList);
 
-    printf("converting is ready!");
+    printf("converting successfully!\n");
 
     return 0;
 }
