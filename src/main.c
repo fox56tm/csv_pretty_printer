@@ -1,13 +1,10 @@
 #include "ListLogic.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 int main()
 {
     List myList = { NULL, NULL, 0 };
 
-    FILE* csvIn = fopen("tests/empty_cols.csv", "r");
+    FILE* csvIn = fopen("tests/float.csv", "r");
     if (csvIn == NULL) {
         printf("Error open");
         return 1;
@@ -19,9 +16,15 @@ int main()
     fseek(csvIn, 0, SEEK_SET);
 
     if (size == 0) {
-        printf("Empty file\n");
+        FILE* empty = fopen("tests/empty_expected.txt", "w");
+        if (!empty) {
+            fclose(csvIn);
+            return 1;
+        }
         fclose(csvIn);
-        return 1;
+        fclose(empty);
+        printf("converting successfully!\n");
+        return 0;
     }
 
     size_t capacity = 128;
@@ -60,7 +63,9 @@ int main()
         if (currLen == 0 || line[0] == '\0')
             continue;
 
-        line[strlen(line) - 1] = '\0'; // удялем \n
+        size_t len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n')
+            line[len - 1] = '\0'; // удялем \n
 
         int colInd = 0;
 
@@ -151,7 +156,7 @@ int main()
     }
 
     //--------------------------------  записываем таблицу в файл
-    FILE* outTxt = fopen("csv_to_txt.txt", "w");
+    FILE* outTxt = fopen("tests/float_expected.txt", "w");
 
     printHorizonLines(outTxt, maxColWidths, myList.head->cols, '=');
 
