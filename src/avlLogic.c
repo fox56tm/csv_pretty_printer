@@ -12,242 +12,376 @@ int nodeHeight(Node* node)
     return 1 + (leftH > rightH ? leftH : rightH);
 }
 
-int avlHeight(avl* tree)
-{
-    return nodeHeight(tree->root);
-}
-
-
 Node* leftRotate(Node* node)
-{   
-    Node* newRoot = node -> right;
+{
+    Node* newRoot = node->right;
 
-    Node* newRootL = newRoot -> left;
+    Node* newRootL = newRoot->left;
 
-    newRoot -> left = node;
+    newRoot->left = node;
 
-    node -> right = newRootL;
+    node->right = newRootL;
 
-    node -> height = 1 + (nodeHeight(node -> left) > nodeHeight(node -> right) ? nodeHeight(node -> left) : nodeHeight(node -> right));
+    node->height = 1 + (nodeHeight(node->left) > nodeHeight(node->right) ? nodeHeight(node->left) : nodeHeight(node->right));
 
-    newRoot -> height = 1 + (nodeHeight(newRoot -> left) > nodeHeight(newRoot -> right) ? nodeHeight(newRoot -> left) : nodeHeight(newRoot -> right));
+    newRoot->height = 1 + (nodeHeight(newRoot->left) > nodeHeight(newRoot->right) ? nodeHeight(newRoot->left) : nodeHeight(newRoot->right));
 
     return newRoot;
-
 }
 
 Node* rightRotate(Node* node)
 {
-    Node* newRoot = node -> left;
+    Node* newRoot = node->left;
 
-    Node* newRootR = newRoot -> right;
+    Node* newRootR = newRoot->right;
 
-    newRoot -> right = node;
+    newRoot->right = node;
 
-    node -> left = newRootR;
+    node->left = newRootR;
 
-    node -> height = 1 + (nodeHeight(node -> left) > nodeHeight(node -> right) ? nodeHeight(node -> left) : nodeHeight(node -> right));
+    node->height = 1 + (nodeHeight(node->left) > nodeHeight(node->right) ? nodeHeight(node->left) : nodeHeight(node->right));
 
-    newRoot -> height = 1 + (nodeHeight(newRoot -> left) > nodeHeight(newRoot -> right) ? nodeHeight(newRoot -> left) : nodeHeight(newRoot -> right));
+    newRoot->height = 1 + (nodeHeight(newRoot->left) > nodeHeight(newRoot->right) ? nodeHeight(newRoot->left) : nodeHeight(newRoot->right));
 
     return newRoot;
-
 }
-Node* rebalanсeNode(Node* node)
+Node* rebalanceNode(Node* node)
 {
-    if(nodeHeight(node -> right) > nodeHeight(node -> left)){
-        
-        if(nodeHeight(node -> right -> left) <= nodeHeight(node -> right -> right)) return leftRotate(node);
+    if (node == NULL)
+        return NULL;
 
-        else 
-            {
-                node -> right = rightRotate(node-> right);
+    int heightR = nodeHeight(node->right);
+    int heightL = nodeHeight(node->left);
+    if ((heightR - heightL) > 1) {
 
-                return leftRotate(node);
-            }
+        if (nodeHeight(node->right->left) <= nodeHeight(node->right->right))
+            return leftRotate(node);
 
-    }
-    else if(nodeHeight(node -> right) < nodeHeight(node -> left)){
-        
-        if(nodeHeight(node -> left -> right) <= nodeHeight(node -> left -> left)) return rightRotate(node);
+        else {
+            node->right = rightRotate(node->right);
 
-        else 
-        {
-            node -> left = leftRotate(node -> left);
+            return leftRotate(node);
+        }
+
+    } else if ((heightL - heightR) > 1) {
+
+        if (nodeHeight(node->left->right) <= nodeHeight(node->left->left))
+            return rightRotate(node);
+
+        else {
+            node->left = leftRotate(node->left);
             return rightRotate(node);
         }
-    }   
-    else return node;
-
+    } else
+        return node;
 }
 
 Node* avlInsert(Node* node, char* code, char* name)
-{   
+{
 
-    if (node == NULL)
-    {
-        if(strlen(code) != 3){ printf("Uncorrect airport code\n"); return NULL;}  
-    
+    if (node == NULL) {
+        if (strlen(code) != 3) {
+            printf("Uncorrect airport code\n");
+            return NULL;
+        }
+
         Node* newNode = malloc(sizeof(Node));
 
-        if(!newNode) {printf("not enough memory\n"); return NULL;}
+        if (!newNode) {
+            printf("not enough memory\n");
+            return NULL;
+        }
 
         newNode->left = NULL;
         newNode->right = NULL;
 
-        size_t lenName = strlen(name);
-        char* newName = malloc(lenName + 1);
+        newNode->name = strdup(name);
 
-        if(!newName) {printf("error name saving\n"); return NULL;}
+        if (!newNode->name) {
+            printf("error name saving\n");
+            free(newNode);
+            return NULL;
+        }
 
-        strncpy(newName,name, lenName);
+        strncpy(newNode->code, code, 3);
 
-        newNode -> name = newName;
-        
-        newName = NULL;
+        newNode->code[3] = '\0';
 
-        strncpy(newNode -> code, code, 3);
+        newNode->height = 0;
 
         return newNode;
-    }
-    else 
-    {
+    } else {
         int cmp = strcmp(code, node->code);
 
-        if (cmp > 0){
-            node->right = avlInsert(node -> right, code, name);}
+        if (cmp > 0) {
+            node->right = avlInsert(node->right, code, name);
+        }
 
-        else if(cmp < 0 ) {
-            node->left = avlInsert(node -> left, code, name);}
-        
-        else {printf("this code already in datalist\n"); return node;}
+        else if (cmp < 0) {
+            node->left = avlInsert(node->left, code, name);
+        }
 
+        else {
+            printf("this code already in datalist\n");
+            return node;
+        }
     }
 
+    node->height = 1 + (nodeHeight(node->left) > nodeHeight(node->right) ? nodeHeight(node->left) : nodeHeight(node->right));
 
-    node -> height = 1 + (nodeHeight(node -> left) > nodeHeight(node -> right) ? nodeHeight(node -> left) : nodeHeight(node -> right));
-
-    return rebalanсeNode(node);
-
+    return rebalanceNode(node);
 }
-void avlRootInsert(avl* avl, char* code, char* name)
+void avlRecInsert(avl* avl, char* code, char* name)
 {
-    avl -> root = avlInsert(avl->root, code, name);
+    int beforeInsert = avlContains(avl->root, code);
 
-    (avl -> nodeCount)++;
+    avl->root = avlInsert(avl->root, code, name);
 
-    return;
+    int afterInsert = avlContains(avl->root, code);
+
+    if (beforeInsert == 0 && afterInsert == 1)
+        (avl->nodeCount)++;
 }
-
-
-
 
 void avlFind(Node* node, char* code)
 {
 
     Node* curr = node;
 
-    if(!curr) return;
+    if (!curr)
+        return;
 
     while (curr != NULL) {
 
         int cmp = strcmp(code, curr->code);
-        if (cmp > 0) {
-            curr = curr -> right;
-        }
 
-        if (cmp < 0) {
-            curr = curr -> left;
-        } 
         if (cmp == 0) {
 
-            for(int i = 0; i < 3; i++)
-                printf("%c", curr -> code[i]);
-            printf(" -> ");
-            size_t len = strlen(curr -> name);
-            for(int i = 0; i < len; i++)
-                printf("%c", curr -> name[i]);
-            printf("\n");
+            printf("%s -> %s\n", curr->code, curr->name);
             return;
         }
+
+        else if (cmp > 0) {
+            curr = curr->right;
+        }
+
+        else
+            curr = curr->left;
     }
 
-    printf("The base doesn't have this code\n");
-    return;
-    
-
+    printf("Airport with code %s not found in the database.\n", code);
 }
 
-/*void avlNodeRemove(Node* node ,char* code)
+int avlContains(Node* node, char* code)
 {
 
     Node* curr = node;
-    Node* currPrev = NULL;
+
+    if (!curr)
+        return 0;
 
     while (curr != NULL) {
 
-        if (curr->data == value) {
+        int cmp = strcmp(code, curr->code);
 
-            if (currPrev != NULL) {
+        if (cmp == 0)
+            return 1;
 
-                if ((curr->left != NULL) && (curr->right != NULL)) {
-                    curr->data = minData(curr->right);
-                    nodeDeliter(curr->right, minData(curr->right));
-                    return;
-                } else if (((curr->left == NULL) && (curr->right != NULL))) {
-                    if (currPrev->data > curr->data)
-                        currPrev->left = curr->right;
-                    else
-                        currPrev->right = curr->right;
-                    free(curr);
-                    return;
-                } else if (((curr->left != NULL) && (curr->right == NULL))) {
-                    if (currPrev->data > curr->data)
-                        currPrev->left = curr->left;
-                    else
-                        currPrev->right = curr->left;
-                    free(curr);
-                    return;
-                } else {
-                    if (currPrev->data > curr->data)
-                        currPrev->left = NULL;
-                    else
-                        currPrev->right = NULL;
-                    free(curr);
-                    return;
-                }
-            } else {
-                if ((curr->left != NULL) && (curr->right != NULL)) {
-                    curr->data = minData(curr->right);
-                    nodeDeliter(curr->right, minData(curr->right));
-                    return;
-                } else if (((curr->left == NULL) && (curr->right != NULL)) || ((curr->left != NULL) && (curr->right == NULL))) {
-
-                    free(curr);
-                    return;
-
-                }
-
-                else {
-                    currPrev = NULL;
-                    free(curr);
-                    return;
-                }
-            }
-        }
-
-        if (curr->data > value) {
-            currPrev = curr;
-            curr = curr->left;
-        } else {
-            currPrev = curr;
+        else if (cmp > 0)
             curr = curr->right;
-        }
+
+        else
+            curr = curr->left;
     }
-    printf("takogo uzla net");
+
+    return 0;
+}
+void freeNode(Node* node)
+{
+    if (node == NULL)
+        return;
+
+    free(node->name);
+
+    node->right = NULL;
+
+    node->left = NULL;
+
+    free(node);
+}
+Node* avlNodeRemove(Node* node, char* code)
+{
+    if (node == NULL) {
+        printf("The database haven't had this code yet\n");
+        return NULL;
+    }
+
+    if (strcmp(node->code, code) == 0) {
+
+        if ((node->left != NULL) && (node->right != NULL)) { // 2 ребенка
+
+            Node* minNode = minData(node->right);
+
+            strncpy(node->code, minNode->code, 3);
+
+            node->code[3] = '\0';
+
+            free(node->name);
+
+            node->name = strdup(minNode->name);
+
+            node->right = avlNodeRemove(node->right, minNode->code);
+
+        } else if (((node->left == NULL) && (node->right != NULL))) {
+
+            Node* curr = node;
+
+            node = curr->right;
+
+            freeNode(curr);
+
+        } else if (((node->left != NULL) && (node->right == NULL))) {
+
+            Node* curr = node;
+
+            node = curr->left;
+
+            freeNode(curr);
+
+        } else {
+
+            freeNode(node);
+            node = NULL;
+        }
+    } else {
+        int cmp = strcmp(node->code, code);
+        if (cmp > 0)
+            node->left = avlNodeRemove(node->left, code);
+
+        else
+            node->right = avlNodeRemove(node->right, code);
+    }
+
+    if (node == NULL)
+        return NULL;
+
+    node->height = 1 + (nodeHeight(node->left) > nodeHeight(node->right) ? nodeHeight(node->left) : nodeHeight(node->right));
+
+    return rebalanceNode(node);
 }
 
-*/
+Node* minData(Node* node)
+{
+    if (node == NULL)
+        return NULL;
 
-//остановился на том что реализую функции поворота -> find -> удаление из дерева(думаю как удалять рекурсивно, потому что надо возвращать Node* и балансировать) -> добавить в базу -> сохранить текущее состояние базы
-// реализовать через список
+    if (node->left != NULL)
+        return minData(node->left);
+
+    else
+        return node;
+}
+
+void avlRemove(avl* avl, char* code)
+{
+    int beforeRemove = avlContains(avl->root, code);
+
+    avl->root = avlNodeRemove(avl->root, code);
+
+    int afterRemove = avlContains(avl->root, code);
+
+    if (beforeRemove == 1 && afterRemove == 0)
+        (avl->nodeCount)--;
+}
+
+void nodesAddToFile(Node* node, FILE* output)
+{
+
+    if (node == NULL)
+        return;
+
+    nodesAddToFile(node->left, output);
+
+    fprintf(output, "%s:%s\n", node->code, node->name);
+
+    nodesAddToFile(node->right, output);
+}
+
+void avlSave(avl* tree, char* airportList)
+{
+    FILE* output = fopen(airportList, "w");
+
+    if (!output) {
+        printf("file open error\n");
+        return;
+    }
+
+    nodesAddToFile(tree->root, output);
+
+    fclose(output);
+
+    printf("Base was saved of: %d airports.\n", tree->nodeCount);
+}
+
+void addListToAvl(avl* tree, char* airportList)
+{
+    FILE* input = fopen(airportList, "r");
+
+    if (!input) {
+        printf("error open input airport list file\n");
+        return;
+    }
+
+    char code[4];
+    char name[101];
+
+    while (fscanf(input, " %3[^:]:%100[^\n]", code, name) == 2) {
+
+        avlRecInsert(tree, code, name);
+    }
+    printf("Was downloded: %d airports.\n", tree->nodeCount);
+
+    fclose(input);
+}
+
+void interfaceFunctionAvl(avl* tree, char* airportList)
+{
+    char line[256];
+
+    while (printf("> "), fgets(line, sizeof(line), stdin)) {
+
+        line[strcspn(line, "\n")] = 0;
+
+        if (strncmp(line, "quit", 4) == 0)
+            break;
+
+        if (strncmp(line, "find ", 5) == 0) {
+
+            avlFind(tree->root, line + 5);
+        } else if (strncmp(line, "add ", 4) == 0) {
+            char code[4];
+
+            char name[101];
+
+            sscanf(line + 4, " %3[^:]:%100[^\n]", code, name);
+
+            avlRecInsert(tree, code, name);
+
+            printf("Add airport: %s\n", code);
+
+        } else if (strncmp(line, "delete ", 7) == 0) {
+
+            avlRemove(tree, line + 7);
+
+            printf("Airport %s has been removed from the database.\n", line + 7);
+        } else if (strncmp(line, "save", 4) == 0) {
+
+            avlSave(tree, airportList);
+
+        } else {
+            printf("please, enter correct commands: find, add, save, delete, quite\n");
+        }
+    }
+}
+// остановился на том что реализую функции: добавить в базу -> сохранить текущее состояние базы
+//  реализовать через список

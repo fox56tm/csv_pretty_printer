@@ -1,16 +1,13 @@
 #ifndef AVLLOGIC_H_INCLUDED
 #define AVLLOGIC_H_INCLUDED
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
+typedef struct AvlNode {
+    struct AvlNode* right;
 
-typedef struct avlNode
-{
-    struct avlNode* right;
-
-    struct avlNode* left;
+    struct AvlNode* left;
 
     char code[4];
     char* name;
@@ -18,8 +15,7 @@ typedef struct avlNode
 
 } Node;
 
-typedef struct avlTree
-{
+typedef struct AvlTree {
     Node* root;
     int nodeCount;
 
@@ -33,11 +29,19 @@ Node* leftRotate(Node* node);
 
 Node* rightRotate(Node* node);
 
-Node* rebalanсeNode(Node* node);
+Node* rebalanceNode(Node* node);
 
 Node* avlInsert(Node* node, char* code, char* name);
 
-void avlRootInsert(avl* avl, char* code, char* name);
+void avlRecInsert(avl* avl, char* code, char* name);
 void avlFind(Node* node, char* code);
-
+void freeNode(Node* node);
+Node* minData(Node* node);
+Node* avlNodeRemove(Node* node, char* code);
+void avlRemove(avl* avlNode, char* code);
+void interfaceFunctionAvl(avl* tree, char* airportList);
+void addListToAvl(avl* tree, char* airportList);
+void avlSave(avl* tree, char* airportList);
+int avlContains(Node* node, char* code);
+void nodesAddToFile(Node* node, FILE* output);
 #endif //
