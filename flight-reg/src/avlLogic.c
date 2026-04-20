@@ -172,7 +172,7 @@ void avlFind(Node* node, char* code)
     printf("Airport with code %s not found in the database.\n", code);
 }
 
-int avlContains(Node* node, char* code)
+bool avlContains(Node* node, char* code)
 {
 
     Node* curr = node;
@@ -296,13 +296,12 @@ void avlRemove(avl* avl, char* code)
 
 void nodesAddToFile(Node* node, FILE* output)
 {
-
     if (node == NULL)
         return;
 
-    nodesAddToFile(node->left, output);
-
     fprintf(output, "%s:%s\n", node->code, node->name);
+
+    nodesAddToFile(node->left, output);
 
     nodesAddToFile(node->right, output);
 }
@@ -383,5 +382,5 @@ void interfaceFunctionAvl(avl* tree, char* airportList)
         }
     }
 }
-// остановился на том что реализую функции: добавить в базу -> сохранить текущее состояние базы
+// дописать очистку дерева
 //  реализовать через список

@@ -1,82 +1,83 @@
-AAD:Adado Airport
-ABP:Atkamba Airport
-ACM:Arica Airport
-ADV:El Daein Airport
-AEE:Adareil Airport
-AEQ:Ar Horqin Airport
-AFK:Kondavattavana Tank Seaplane Base
-AFT:Afutara Aerodrome
-ATD:Uru Harbour Airport
-ATT:Atmautluak Airport
-AXB:Maxson Airfield
-BBQ:Burton-Nibbs International Airport
-BCS:Southern Seaplane Airport
-BDF:Rinkenberger Restricted Landing Area
-BKF:Lake Brooks Seaplane Base
-BPF:Batuna Aerodrome
-BWL:Earl Henry Airport
-BYW:Blakely Island Airport
-BZT:Eagle Air Park
-CCD:Century City Heliport
-CHU:Chuathbaluk Airport
-CSE:Crested Butte Airpark
-CUS:Columbus Airport
-CWS:Center Island Airport
-DRF:Drift River Airport
-DST:Dubai Seaplane Terminal
-DUF:Pine Island Airport
-ELW:Ellamar Seaplane Base
-FAK:False Island Seaplane Base
-FOB:Fort Bragg Airport
-GCT:Grand Canyon Bar Ten Airstrip
-GDH:Golden Horn Lodge Seaplane Base
-GEF:Geva Airport
-HBH:Entrance Island Seaplane Base
-HGZ:Hog River Airport
-ICY:Icy Bay Airport
-JCY:LBJ Ranch Airport
-JID:Recreation and Conference Center Heliport
-KCQ:Chignik Lake Airport
-KKK:Kalakaket Creek AS Airport
-KLL:Levelock Airport
-KOZ:Ouzinkie Airport
-LIV:Livengood Camp Airport
-LVD:Lime Village Airport
-MHS:Dunsmuir Muni-Mott Airport
-MMN:Minute Man Air Field
-MNT:Minto Al Wright Airport
-NIR:Chase Field Industrial Airport
-NNK:Naknek Airport
-NUP:Nunapitchuk Airport
-NYS:New York Skyports Inc Seaplane Base
-OCA:Ocean Reef Club Airport
-OTN:Ed-Air Airport
-PDB:Pedro Bay Airport
-PPV:Port Protection Seaplane Base
-PSQ:Philadelphia Seaplane Base
-PTC:Port Alice Seaplane Base
-PUL:Port of Poulsbo Marina Moorage Seaplane Base
-REE:Reese Airpark
-RFK:Rollang Field
-RNA:Ulawa Airport
-SGW:Saginaw Seaplane Base
-SPQ:Catalina Air-Sea Terminal Heliport
-SSW:Stuart Island Airpark
-TEH:Tetlin Airport
-TEK:Tatitlek Airport
-TKI:Tokeen Seaplane Base
-TLF:Telida Airport
-TNK:Tununak Airport
-TSS:East 34th Street Heliport
-TWA:Twin Hills Airport
-UGS:Ugashik Airport
-UTK:Utirik Airport
-VEV:Barakoma Airport
-VRS:Roy Otten Memorial Airfield
-WFB:Ketchikan Harbor Seaplane Base
+TES:TESTAIR
+WYB:Yes Bay Lodge Seaplane Base
+WWP:Whale Pass Seaplane Float Harbor Facility
+WLR:Loring Seaplane Base
 WHD:Hyder Seaplane Base
 WKK:Aleknagik / New Airport
-WLR:Loring Seaplane Base
 WTL:Tuntutuliak Airport
-WWP:Whale Pass Seaplane Float Harbor Facility
-WYB:Yes Bay Lodge Seaplane Base
+VRS:Roy Otten Memorial Airfield
+UTK:Utirik Airport
+VEV:Barakoma Airport
+WFB:Ketchikan Harbor Seaplane Base
+TWA:Twin Hills Airport
+TNK:Tununak Airport
+TSS:East 34th Street Heliport
+TKI:Tokeen Seaplane Base
+TEH:Tetlin Airport
+TEK:Tatitlek Airport
+TLF:Telida Airport
+UGS:Ugashik Airport
+SPQ:Catalina Air-Sea Terminal Heliport
+RNA:Ulawa Airport
+SGW:Saginaw Seaplane Base
+REE:Reese Airpark
+PTC:Port Alice Seaplane Base
+PUL:Port of Poulsbo Marina Moorage Seaplane Base
+RFK:Rollang Field
+PPV:Port Protection Seaplane Base
+OTN:Ed-Air Airport
+PDB:Pedro Bay Airport
+NYS:New York Skyports Inc Seaplane Base
+NNK:Naknek Airport
+NUP:Nunapitchuk Airport
+OCA:Ocean Reef Club Airport
+PSQ:Philadelphia Seaplane Base
+MNT:Minto Al Wright Airport
+MHS:Dunsmuir Muni-Mott Airport
+MMN:Minute Man Air Field
+LIV:Livengood Camp Airport
+KLL:Levelock Airport
+KOZ:Ouzinkie Airport
+LVD:Lime Village Airport
+KCQ:Chignik Lake Airport
+JCY:LBJ Ranch Airport
+JID:Recreation and Conference Center Heliport
+HGZ:Hog River Airport
+GEF:Geva Airport
+HBH:Entrance Island Seaplane Base
+ICY:Icy Bay Airport
+KKK:Kalakaket Creek AS Airport
+NIR:Chase Field Industrial Airport
+SSW:Stuart Island Airpark
+GCT:Grand Canyon Bar Ten Airstrip
+FAK:False Island Seaplane Base
+FOB:Fort Bragg Airport
+DUF:Pine Island Airport
+DRF:Drift River Airport
+DST:Dubai Seaplane Terminal
+ELW:Ellamar Seaplane Base
+CUS:Columbus Airport
+CHU:Chuathbaluk Airport
+CSE:Crested Butte Airpark
+BZT:Eagle Air Park
+BWL:Earl Henry Airport
+BYW:Blakely Island Airport
+CCD:Century City Heliport
+CWS:Center Island Airport
+BKF:Lake Brooks Seaplane Base
+BCS:Southern Seaplane Airport
+BDF:Rinkenberger Restricted Landing Area
+AXB:Maxson Airfield
+ATD:Uru Harbour Airport
+ATT:Atmautluak Airport
+BBQ:Burton-Nibbs International Airport
+AFK:Kondavattavana Tank Seaplane Base
+AEE:Adareil Airport
+AEQ:Ar Horqin Airport
+ACM:Arica Airport
+AAD:Adado Airport
+ABP:Atkamba Airport
+ADV:El Daein Airport
+AFT:Afutara Aerodrome
+BPF:Batuna Aerodrome
+GDH:Golden Horn Lodge Seaplane Base
