@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct AvlNode {
     struct AvlNode* right;
@@ -55,4 +56,11 @@ void avlSave(avl* tree, char* airportList);
 bool avlContains(Node* node, char* code);
 
 void nodesAddToFile(Node* node, FILE* output);
+
+Node* recNodeRemove(Node* node);
+
+void freeRecAvl(avl* tree);
+
+void collectCodesToArray(Node* node, char codes[][4], int* count);
+
 #endif //

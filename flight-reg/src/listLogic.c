@@ -45,7 +45,7 @@ void listFind(List* list, char* code)
 
     while (curr != NULL) {
         if (strcmp(curr->code, code) == 0) {
-            printf("%s -> %s\n", curr->code, curr->name);
+            // printf("%s -> %s\n", curr->code, curr->name); убрано для perf
             return;
         }
 
@@ -53,7 +53,7 @@ void listFind(List* list, char* code)
             curr = curr->next;
     }
 
-    printf("Airport with code %s not found in the database.\n", code);
+    // printf("Airport with code %s not found in the database.\n", code); для 2 сценария
 }
 
 bool listContains(List* list, char* code)
@@ -222,4 +222,21 @@ void interfaceFunctionList(List* list, char* airportList)
         }
     }
 }
-// написать считку с файла
+
+void collectCodesToArray(List* list, char codes[][4], int* count)
+{
+    if (list == NULL)
+        return;
+
+    Node* curr = list->head;
+
+    while (curr != NULL) {
+        strncpy(codes[*count], curr->code, 3);
+
+        codes[*count][3] = '\0';
+
+        (*count)++;
+
+        curr = curr->next;
+    }
+}

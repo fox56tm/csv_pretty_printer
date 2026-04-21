@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct Node {
     char code[4];
@@ -26,5 +27,5 @@ void freeList(List* list);
 void addListToList(List* list, char* airportList);
 void listSave(List* list, char* airportList);
 void interfaceFunctionList(List* list, char* airportList);
-
+void collectCodesToArray(List* list, char codes[][4], int* count);
 #endif

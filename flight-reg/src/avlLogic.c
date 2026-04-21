@@ -122,7 +122,7 @@ Node* avlInsert(Node* node, char* code, char* name)
         }
 
         else {
-            printf("this code already in datalist\n");
+            // printf("this code already in datalist\n"); для 2 сценария
             return node;
         }
     }
@@ -157,7 +157,7 @@ void avlFind(Node* node, char* code)
 
         if (cmp == 0) {
 
-            printf("%s -> %s\n", curr->code, curr->name);
+            // printf("%s -> %s\n", curr->code, curr->name); убрано для perf
             return;
         }
 
@@ -169,7 +169,7 @@ void avlFind(Node* node, char* code)
             curr = curr->left;
     }
 
-    printf("Airport with code %s not found in the database.\n", code);
+    // printf("Airport with code %s not found in the database.\n", code); для 2 сценария
 }
 
 bool avlContains(Node* node, char* code)
@@ -382,5 +382,44 @@ void interfaceFunctionAvl(avl* tree, char* airportList)
         }
     }
 }
-// дописать очистку дерева
-//  реализовать через список
+
+Node* recNodeRemove(Node* node)
+{
+    if (node == NULL)
+        return NULL;
+
+    node->left = recNodeRemove(node->left);
+
+    node->right = recNodeRemove(node->right);
+
+    freeNode(node);
+    return NULL;
+}
+
+void freeRecAvl(avl* tree)
+{
+    tree->root = recNodeRemove(tree->root);
+    tree->nodeCount = 0;
+}
+void collectCodesToArray(Node* node, char codes[][4], int* count)
+{
+    if (node == NULL)
+        return;
+
+    collectCodesToArray(node->left, codes, count);
+
+    strncpy(codes[*count], node->code, 3);
+
+    codes[*count][3] = '\0';
+
+    (*count)++;
+
+    collectCodesToArray(node->right, codes, count);
+}
+void scenario1(Node* node, avl* tree)
+{
+    if (node == NULL)
+        return;
+
+    avlFind(tree->root, node->code);
+}
