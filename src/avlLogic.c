@@ -416,10 +416,3 @@ void collectCodesToArray(Node* node, char codes[][4], int* count)
 
     collectCodesToArray(node->right, codes, count);
 }
-void scenario1(Node* node, avl* tree)
-{
-    if (node == NULL)
-        return;
-
-    avlFind(tree->root, node->code);
-}

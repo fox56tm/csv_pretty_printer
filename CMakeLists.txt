@@ -12,3 +12,11 @@ target_link_libraries(avl PRIVATE Avllib)
 
 add_executable(list src/list.c)
 target_link_libraries(list PRIVATE Listlib)
+
+add_executable(testsAvl tests/testsAvl.c)
+target_link_libraries(testsAvl PRIVATE Avllib)
+
+add_executable(testsList tests/testsList.c)
+target_link_libraries(testsList PRIVATE Listlib)
+
+
