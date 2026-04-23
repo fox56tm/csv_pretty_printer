@@ -28,4 +28,6 @@ void addToTail(List* myList, char** cells, int colCount);
 
 void freeList(List* list);
 
+void csvConvert(char* filename, List* list, char* output);
+
 #endif // LISTLOGIC_H_INCLUDED
