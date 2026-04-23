@@ -9,7 +9,7 @@ typedef struct Node {
 
 typedef struct {
     int cityIndex;
-    int dist; 
+    int dist;
 } HeapElement;
 
 typedef struct {
@@ -18,7 +18,7 @@ typedef struct {
     int capacity;
 } MinHeap;
 
-Node** roadsRead(char* fileName,int* capitalCount, int* cities, int*roads, FILE** capitals);
+Node** roadsRead(char* fileName, int* capitalCount, int* cities, int* roads, FILE** capitals);
 
 void addEdge(Node** graph, int city1, int city2, int roadLen);
 
