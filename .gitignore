@@ -97,5 +97,6 @@ dkms.conf
 build/
 .cache
 *.cbp
+.vscode
 *.layout
-*.depend
+main
