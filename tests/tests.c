@@ -14,6 +14,7 @@ int fileContains(const char* path, const char* word)
         }
     }
     fclose(f);
+
     return 0;
 }
 
@@ -27,9 +28,7 @@ int convertTest()
     fclose(f);
 
     List list = { NULL, NULL, 0 };
-
     csvConvert("tests/basic.csv", &list, "tests/basic-expected.txt");
-
     int name = fileContains("tests/basic-expected.txt", "name");
     int alice = fileContains("tests/basic-expected.txt", "Alice");
     int fl = fileContains("tests/basic-expected.txt", "25.76");
@@ -43,7 +42,6 @@ int emptyFileTest()
 {
     FILE* f = fopen("tests/test-empty.csv", "w");
     fclose(f);
-
     List list = { NULL, NULL, 0 };
     csvConvert("tests/test-empty.csv", &list, "tests/test-empty-expected.txt");
     int emptyList = list.nodeCount == 0;
