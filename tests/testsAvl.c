@@ -3,13 +3,11 @@
 int heightTest()
 {
     avl t = { NULL, 0 };
-
     const char* codes[] = { "AAA", "BBB", "CCC", "DDD", "EEE", "FFF", "GGG" };
     for (int i = 0; i < 7; i++)
         avlRecInsert(&t, (char*)codes[i], "test");
 
     int h = nodeHeight(t.root);
-
     freeRecAvl(&t);
 
     return h;
@@ -18,13 +16,10 @@ int heightTest()
 int insertTest()
 {
     avl t = { NULL, 0 };
-
     avlRecInsert(&t, "AMS", "Amsterdam");
     avlRecInsert(&t, "SVO", "Sheremetyevo");
     avlRecInsert(&t, "LED", "Pulkovo");
-
     int count = t.nodeCount;
-
     freeRecAvl(&t);
 
     return count;
@@ -33,12 +28,9 @@ int insertTest()
 int duplicateTest()
 {
     avl t = { NULL, 0 };
-
     avlRecInsert(&t, "AMS", "Amsterdam");
     avlRecInsert(&t, "AMS", "Amsterdam");
-
     int count = t.nodeCount;
-
     freeRecAvl(&t);
 
     return count;
@@ -47,12 +39,9 @@ int duplicateTest()
 int containsTest()
 {
     avl t = { NULL, 0 };
-
     avlRecInsert(&t, "SVO", "Sheremetyevo");
-
     int found = avlContains(t.root, "SVO");
     int notFound = avlContains(t.root, "LED");
-
     freeRecAvl(&t);
 
     return found == 1 && notFound == 0;
@@ -60,16 +49,12 @@ int containsTest()
 int removeTest()
 {
     avl t = { NULL, 0 };
-
     avlRecInsert(&t, "BBB", "B");
     avlRecInsert(&t, "AAA", "A");
     avlRecInsert(&t, "CCC", "C");
-
     avlRemove(&t, "AAA");
-
     int count = t.nodeCount;
     int contains = avlContains(t.root, "AAA");
-
     freeRecAvl(&t);
 
     return count == 2 && contains == 0;
@@ -78,13 +63,9 @@ int removeTest()
 int removeNonexistentTest()
 {
     avl t = { NULL, 0 };
-
     avlRecInsert(&t, "AMS", "Amsterdam");
-
     avlRemove(&t, "ZZZ");
-
     int count = t.nodeCount;
-
     freeRecAvl(&t);
 
     return count == 1;

@@ -1,5 +1,4 @@
-#ifndef LISTLOGIC_H_INCLUDED
-#define LISTLOGIC_H_INCLUDED
+#pragma once
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +14,6 @@ typedef struct Node {
 typedef struct ListController {
     Node* head;
     int nodeCount;
-
 } List;
 
 void listInsert(List* list, char* code, char* name);
@@ -28,4 +26,3 @@ void addListToList(List* list, char* airportList);
 void listSave(List* list, char* airportList);
 void interfaceFunctionList(List* list, char* airportList);
 void collectCodesToArray(List* list, char codes[][4], int* count);
-#endif
