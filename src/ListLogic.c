@@ -25,6 +25,7 @@ void addToTail(List* myList, char** cells, int colCount)
         myList->tail = newNode;
     }
 }
+
 int isNumber(char* str)
 {
     int dotCount = 0;
@@ -48,6 +49,7 @@ int isNumber(char* str)
     else
         return 0;
 }
+
 void printHorizonLines(FILE* file, const int* width, int colCount, char sep)
 {
     fprintf(file, "+");
@@ -75,10 +77,111 @@ void freeList(List* list)
     list->head = list->tail = NULL;
     list->nodeCount = 0;
 }
-void csvConvert(char* filename, List* list, char* output)
+
+char** parsing(char* line, int* colInd)
+{
+    *colInd = 0;
+    char** cells = NULL;
+    char* start = line; // начало текущей ячейки
+    char* p = line; // указатель для прохода
+    while (1) {
+        if (*p == ',' || *p == '\0') {
+            int end = (*p == '\0'); // дошли ли до конца
+            *p = '\0';
+            char** temp = realloc(cells, (*colInd + 1) * sizeof(char*));
+            if (temp != NULL) {
+                cells = temp;
+            } else {
+                printf("parsing error\n");
+                free(cells);
+                return NULL;
+            }
+            cells[*colInd] = strdup(start); // копируем кусок
+            (*colInd)++;
+            if (end) {
+                break;
+            }
+            start = p + 1;
+        }
+        p++;
+    }
+    return cells;
+}
+
+int* maxColWidthsFunc(List* list, int* maxColCount) // считаем максимальную ширину
+{
+    *maxColCount = 0;
+    for (Node* curr = list->head; curr != NULL; curr = curr->next) {
+        if (curr->cols > *maxColCount)
+            *maxColCount = curr->cols;
+    }
+    if (*maxColCount == 0) {
+        freeList(list);
+        return NULL;
+    }
+    int* maxColWidths = calloc(*maxColCount, sizeof(int));
+    if (maxColWidths == NULL) {
+        free(maxColWidths);
+        freeList(list);
+        printf("memmory error");
+        return NULL;
+    }
+    for (Node* curr = list->head; curr != NULL; curr = curr->next) {
+        for (int j = 0; j < curr->cols; j++) {
+            if (strlen(curr->Cells[j]) > maxColWidths[j])
+                maxColWidths[j] = (int)strlen(curr->Cells[j]);
+        }
+    }
+    return maxColWidths;
+}
+
+void tableToFile(List* list, int* maxColWidths, int maxColCount, char* output) // функция записи в файл
+{
+    if (list->head == NULL)
+        return;
+    FILE* outTxt = fopen(output, "w");
+    if (!outTxt) {
+        free(maxColWidths);
+        freeList(list);
+        return;
+    }
+    printHorizonLines(outTxt, maxColWidths, maxColCount, '=');
+    for (int i = 0; i < maxColCount; i++) {
+        if (i < list->head->cols) {
+            fprintf(outTxt, "| %-*s ", maxColWidths[i], list->head->Cells[i]);
+        } else {
+            fprintf(outTxt, "| %-*s ", maxColWidths[i], "");
+        }
+    }
+    fprintf(outTxt, "|\n");
+    printHorizonLines(outTxt, maxColWidths, maxColCount, '=');
+    Node* curr2 = list->head->next;
+    for (int i = 0; i < list->nodeCount - 1; i++) {
+        if (curr2 == NULL)
+            break;
+        for (int j = 0; j < maxColCount; j++) {
+            if (j < curr2->cols) {
+                if (isNumber(curr2->Cells[j]))
+                    fprintf(outTxt, "| %*s ", maxColWidths[j], curr2->Cells[j]);
+                else
+                    fprintf(outTxt, "| %-*s ", maxColWidths[j], curr2->Cells[j]);
+            } else
+                fprintf(outTxt, "| %*s ", maxColWidths[j], "");
+        }
+        fprintf(outTxt, "|\n");
+        printHorizonLines(outTxt, maxColWidths, maxColCount, '-');
+        curr2 = curr2->next;
+    }
+    fclose(outTxt);
+    free(maxColWidths);
+    freeList(list);
+    printf("converting successfully!\n");
+}
+
+void csvConvert(char* filename, List* list, char* output) // основная функция
 {
     FILE* csvIn = fopen(filename, "r");
-    if (csvIn == NULL) {
+    if (!csvIn) {
         printf("Error open");
         return;
     }
@@ -124,95 +227,30 @@ void csvConvert(char* filename, List* list, char* output)
             continue;
         size_t len = strlen(line);
         if (len > 0 && line[len - 1] == '\n')
-            line[len - 1] = '\0'; // удялем \n
+            line[len - 1] = '\0'; // удаляем \n
 
-        int colInd = 0;
-        char** cells = NULL;
-        //--------------------------------  массив токенов
-        char* start = line; // начало текущей ячейки
-        char* p = line; // указатель для прохода
-        while (1) {
-            if (*p == ',' || *p == '\0') {
-                int end = (*p == '\0'); // дошли ли до конца
-                *p = '\0';
-                char** temp = realloc(cells, (colInd + 1) * sizeof(char*));
-                if (temp != NULL) {
-                    cells = temp;
-                } else {
-                    for (int i = 0; i < colInd; i++)
-                        free(cells[i]);
-                    free(cells);
-                    free(line);
-                    fclose(csvIn);
-                    printf("memory error");
-                    return;
-                }
-                cells[colInd] = strdup(start); // копируем кусок
-                colInd++;
-                if (end) {
-                    break;
-                }
-                start = p + 1;
-            }
-            p++;
+        int colInd;
+        char** cells = parsing(line, &colInd);
+
+        if (!cells) {
+            free(line);
+            fclose(csvIn);
+            freeList(list);
+            printf("memmory error in cells");
+            return;
         }
+
         addToTail(list, cells, colInd);
         cells = NULL;
     }
     fclose(csvIn);
-    //--------------------------------  считаем ширину столбцов
-    int maxColCount = 0;
-    for (Node* curr = list->head; curr != NULL; curr = curr->next) {
-        if (curr->cols > maxColCount)
-            maxColCount = curr->cols;
-    }
-    if (maxColCount == 0) {
-        freeList(list);
-        free(line);
-        return;
-    }
-    int* maxColWidths = calloc(maxColCount, sizeof(int));
-    if (maxColWidths == NULL) {
-        free(maxColWidths);
+    int maxColCount;
+    int* maxColWidths = maxColWidthsFunc(list, &maxColCount); // считаем ширину столбцов
+    if (!maxColWidths) {
         free(line);
         freeList(list);
-        printf("memmory error");
         return;
     }
-    for (Node* curr = list->head; curr != NULL; curr = curr->next) {
-        for (int j = 0; j < curr->cols; j++) {
-            if (strlen(curr->Cells[j]) > maxColWidths[j])
-                maxColWidths[j] = (int)strlen(curr->Cells[j]);
-        }
-    }
-    //--------------------------------  записываем таблицу в файл
-    FILE* outTxt = fopen(output, "w");
-    printHorizonLines(outTxt, maxColWidths, list->head->cols, '=');
-    for (int i = 0; i < (list->head->cols); i++) {
-        fprintf(outTxt, "| %-*s ", maxColWidths[i], list->head->Cells[i]);
-    }
-    fprintf(outTxt, "|\n");
-    printHorizonLines(outTxt, maxColWidths, maxColCount, '=');
-    Node* curr2 = list->head->next;
-    for (int i = 0; i < list->nodeCount - 1; i++) {
-        if (curr2 == NULL)
-            break;
-        for (int j = 0; j < maxColCount; j++) {
-            if (j < curr2->cols) {
-                if (isNumber(curr2->Cells[j]))
-                    fprintf(outTxt, "| %*s ", maxColWidths[j], curr2->Cells[j]);
-                else
-                    fprintf(outTxt, "| %-*s ", maxColWidths[j], curr2->Cells[j]);
-            } else
-                fprintf(outTxt, "| %*s ", maxColWidths[j], "");
-        }
-        fprintf(outTxt, "|\n");
-        printHorizonLines(outTxt, maxColWidths, maxColCount, '-');
-        curr2 = curr2->next;
-    }
-    fclose(outTxt);
     free(line);
-    free(maxColWidths);
-    freeList(list);
-    printf("converting successfully!\n");
+    tableToFile(list, maxColWidths, maxColCount, output);
 }

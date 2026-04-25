@@ -15,8 +15,5 @@ typedef struct ListControl {
     int nodeCount;
 } List;
 
-void addToTail(List* myList, char** cells, int colCount);
-void freeList(List* list);
 void csvConvert(char* filename, List* list, char* output);
 int isNumber(char* str);
-void printHorizonLines(FILE* file, const int* width, int colCount, char sep);

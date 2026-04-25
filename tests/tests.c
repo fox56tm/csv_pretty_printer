@@ -21,7 +21,7 @@ int fileContains(const char* path, const char* word)
 int convertTest()
 {
     FILE* f = fopen("tests/basic.csv", "w");
-    fprintf(f, "name,age,city\n");
+    fprintf(f, "name,age\n");
     fprintf(f, "Alice,25.76,New York\n");
     fprintf(f, "Bob,30.0\n");
     fprintf(f, "Charlie,22.34,London\n");
