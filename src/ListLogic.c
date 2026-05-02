@@ -1,4 +1,19 @@
 #include "ListLogic.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct ListNode {
+    char** Cells;
+    int cols;
+    struct ListNode* next;
+} Node;
+
+typedef struct ListControl {
+    Node* head;
+    Node* tail;
+    int nodeCount;
+} List;
 
 void addToTail(List* myList, char** cells, int colCount)
 {
@@ -178,8 +193,9 @@ void tableToFile(List* list, int* maxColWidths, int maxColCount, char* output) /
     printf("converting successfully!\n");
 }
 
-void csvConvert(char* filename, List* list, char* output) // основная функция
+void csvConvert(char* filename, char* output) // основная функция
 {
+    List list = { NULL, NULL, 0 };
     FILE* csvIn = fopen(filename, "r");
     if (!csvIn) {
         printf("Error open");
@@ -217,6 +233,7 @@ void csvConvert(char* filename, List* list, char* output) // основная ф
             } else {
                 free(line);
                 fclose(csvIn);
+                freeList(&list);
                 printf("memmory error");
                 return;
             }
@@ -235,22 +252,22 @@ void csvConvert(char* filename, List* list, char* output) // основная ф
         if (!cells) {
             free(line);
             fclose(csvIn);
-            freeList(list);
+            freeList(&list);
             printf("memmory error in cells");
             return;
         }
 
-        addToTail(list, cells, colInd);
+        addToTail(&list, cells, colInd);
         cells = NULL;
     }
     fclose(csvIn);
     int maxColCount;
-    int* maxColWidths = maxColWidthsFunc(list, &maxColCount); // считаем ширину столбцов
+    int* maxColWidths = maxColWidthsFunc(&list, &maxColCount); // считаем ширину столбцов
     if (!maxColWidths) {
         free(line);
-        freeList(list);
+        freeList(&list);
         return;
     }
     free(line);
-    tableToFile(list, maxColWidths, maxColCount, output);
+    tableToFile(&list, maxColWidths, maxColCount, output);
 }

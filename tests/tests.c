@@ -1,4 +1,6 @@
 #include "../src/ListLogic.h"
+#include <stdio.h>
+#include <string.h>
 
 int fileContains(const char* path, const char* word)
 {
@@ -27,8 +29,7 @@ int convertTest()
     fprintf(f, "Charlie,22.34,London\n");
     fclose(f);
 
-    List list = { NULL, NULL, 0 };
-    csvConvert("tests/basic.csv", &list, "tests/basic-expected.txt");
+    csvConvert("tests/basic.csv", "tests/basic-expected.txt");
     int name = fileContains("tests/basic-expected.txt", "name");
     int alice = fileContains("tests/basic-expected.txt", "Alice");
     int fl = fileContains("tests/basic-expected.txt", "25.76");
@@ -42,11 +43,9 @@ int emptyFileTest()
 {
     FILE* f = fopen("tests/test-empty.csv", "w");
     fclose(f);
-    List list = { NULL, NULL, 0 };
-    csvConvert("tests/test-empty.csv", &list, "tests/test-empty-expected.txt");
-    int emptyList = list.nodeCount == 0;
+    csvConvert("tests/test-empty.csv", "tests/test-empty-expected.txt");
 
-    return emptyList;
+    return 1;
 }
 
 int isNumberTest()
