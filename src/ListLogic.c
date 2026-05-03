@@ -22,7 +22,7 @@ void addToTail(List* myList, char** cells, int colCount)
         for (int i = 0; i < colCount; i++)
             free(cells[i]);
         free(cells);
-        printf("memory error");
+        printf("memory error\n");
 
         return;
     }
@@ -138,7 +138,7 @@ int* maxColWidthsFunc(List* list, int* maxColCount) // считаем макси
     if (maxColWidths == NULL) {
         free(maxColWidths);
         freeList(list);
-        printf("memmory error");
+        printf("memmory error\n");
         return NULL;
     }
     for (Node* curr = list->head; curr != NULL; curr = curr->next) {
@@ -193,34 +193,13 @@ void tableToFile(List* list, int* maxColWidths, int maxColCount, char* output) /
     printf("converting successfully!\n");
 }
 
-void csvConvert(char* filename, char* output) // основная функция
+int csvToList(FILE* csvIn, List* list)
 {
-    List list = { NULL, NULL, 0 };
-    FILE* csvIn = fopen(filename, "r");
-    if (!csvIn) {
-        printf("Error open");
-        return;
-    }
-    fseek(csvIn, 0, SEEK_END);
-    long size = ftell(csvIn);
-    fseek(csvIn, 0, SEEK_SET);
-    if (size == 0) {
-        FILE* empty = fopen("tests/empty_expected.txt", "w");
-        if (!empty) {
-            fclose(csvIn);
-            return;
-        }
-        fclose(csvIn);
-        fclose(empty);
-        printf("converting successfully!\n");
-        return;
-    }
     size_t capacity = 128;
     char* line = malloc(capacity);
     if (line == NULL) {
-        printf("mem error");
-        fclose(csvIn);
-        return;
+        printf("mem error\n");
+        return 0;
     }
     while (fgets(line, (int)capacity, csvIn) != NULL) {
         size_t currLen = strlen(line);
@@ -232,42 +211,63 @@ void csvConvert(char* filename, char* output) // основная функция
                 line = temp;
             } else {
                 free(line);
-                fclose(csvIn);
-                freeList(&list);
-                printf("memmory error");
-                return;
+                freeList(list);
+                printf("memory error\n");
+                return 0;
             }
             if (fgets(line + oldLineLen, (int)(capacity - oldLineLen), csvIn) == NULL)
                 break;
         }
         if (currLen == 0 || line[0] == '\0')
             continue;
+
         size_t len = strlen(line);
         if (len > 0 && line[len - 1] == '\n')
             line[len - 1] = '\0'; // удаляем \n
 
         int colInd;
         char** cells = parsing(line, &colInd);
-
         if (!cells) {
             free(line);
-            fclose(csvIn);
-            freeList(&list);
-            printf("memmory error in cells");
-            return;
+            freeList(list);
+            printf("memory error in cells\n");
+            return 0;
         }
+        addToTail(list, cells, colInd);
+    }
+    free(line);
+    return 1;
+}
 
-        addToTail(&list, cells, colInd);
-        cells = NULL;
+void csvConvert(char* filename, char* output)
+{
+    FILE* csvIn = fopen(filename, "r");
+    if (!csvIn) {
+        printf("Error open\n");
+        return;
+    }
+    fseek(csvIn, 0, SEEK_END);
+    long size = ftell(csvIn);
+    fseek(csvIn, 0, SEEK_SET);
+    if (size == 0) {
+        FILE* empty = fopen("tests/empty_expected.txt", "w");
+        if (empty)
+            fclose(empty);
+        fclose(csvIn);
+        printf("converting successfully in empty file!\n");
+        return;
+    }
+    List list = { NULL, NULL, 0 };
+    if (!csvToList(csvIn, &list)) {
+        fclose(csvIn);
+        return;
     }
     fclose(csvIn);
     int maxColCount;
     int* maxColWidths = maxColWidthsFunc(&list, &maxColCount); // считаем ширину столбцов
     if (!maxColWidths) {
-        free(line);
         freeList(&list);
         return;
     }
-    free(line);
     tableToFile(&list, maxColWidths, maxColCount, output);
 }
